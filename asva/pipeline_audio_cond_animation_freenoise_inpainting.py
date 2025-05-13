@@ -722,9 +722,14 @@ def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, 
         # ====================
 
         # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples"
-        keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/open_domain-kf_audio_7.5_img_2.0/samples/"
+        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/open_domain-kf_audio_7.5_img_2.0/samples/"
+        
         # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/epoch=849-step=10200-kf_audio_7.5_img_2.0/samples"
         # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_uniform/epoch=549-step=6600_audio_4.0_img_2.0_inpainting_step_0/samples"
+
+        # keyframe_gen_dir = "/dockerx/groups/tmp/asva_12_kf_no_idx/epoch=849-step=10200-kf_audio_7.5_img_2.0/samples"
+
+
 
         
         keyframe_gen_path = [ os.path.join(keyframe_gen_dir, filename.replace('.mp4', f'_clip-0{str(i)}.mp4')) for i in range(num_clips_per_video)]
@@ -741,10 +746,11 @@ def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, 
             load_audio_as_melspectrogram=False
         )
 
-        load_videos, _ = load_v_clips_uniformly(
-            "/dockerx/local/AVSync15/open_video/20250305_1237_Hammer_Strikes_Wood_simple_compose_01jnkp3kzbfhr8kngd25an5r0e.mp4", video_fps, video_frames, video_size, num_clips_per_video,
-            load_audio_as_melspectrogram=True
-        )
+        # load_videos, _ = load_v_clips_uniformly(
+        #     "/dockerx/local/AVSync15/open_video/20250305_1237_Hammer_Strikes_Wood_simple_compose_01jnkp3kzbfhr8kngd25an5r0e.mp4", video_fps, video_frames, video_size, num_clips_per_video,
+        #     load_audio_as_melspectrogram=True
+        # )
+        
         full_frame_idx_array = np.linspace(0, 48, num=video_frames+1, dtype=int)[:-1]
         
         if fps_condition_type == "kfs":
