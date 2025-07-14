@@ -21,21 +21,15 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 
-def main():
+def train():
     exp_name = "version-tmp"
     os.makedirs(f"vis-{exp_name}", exist_ok=True)
     os.makedirs(f"save-{exp_name}", exist_ok=True)
     # init model
     processor = None
-    # processor, model = init_wav2vec()
+
     model = init_imagebind()
-    # model = ResNet()
-    # model = FCModel()
     
-    
-    # if torch.cuda.device_count() > 1:
-    #     print("Using", torch.cuda.device_count(), "GPUs")
-    #     model = nn.DataParallel(model)
     model = model.to("cuda")
     model.load_state_dict(torch.load("/dockerx/share/wav2vec/save/checkpoint-0-0.10344.pth"))
     
@@ -46,17 +40,19 @@ def main():
     # init data
     root = "/dockerx/share/DynamiCrafter/data/AVSync15/train"
     label = "/dockerx/share/DynamiCrafter/data/AVSync15/train_curves_npy"
-    vgg_sound = '/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video'
-    vgg_label = '/dockerx/local/data/VGGSound_audio_scores/labels/label_9438'
+
     train_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "train")
     val_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "test")
-    # vgg_sound_trainset =AudioDataset(root_dir=vgg_sound, label_dir=vgg_label, wav2vec_processor = processor, split = "vgg_sound")
-
 
     # Create a DataLoader to load the dataset
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=8)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=8)
+
+    # vgg_sound = '/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video'
+    # vgg_label = '/dockerx/local/data/VGGSound_audio_scores/labels/label_9438'
+    # vgg_sound_trainset =AudioDataset(root_dir=vgg_sound, label_dir=vgg_label, wav2vec_processor = processor, split = "vgg_sound")
     # vgg_sound_train_dataloader = torch.utils.data.DataLoader(vgg_sound_trainset, batch_size=16, shuffle=True)
+    
     n_epochs = 500
 
     mse_loss = MSELoss()
@@ -66,8 +62,6 @@ def main():
 
     t = 0.2
     for epoch in range(n_epochs):
-        # t will be used to balance the loss, start with 1, decrease to 0
-        # t = max(0, 1 - epoch / 50)
         # train
         model.train()
         desc = f"Epoch {epoch}"
@@ -78,8 +72,6 @@ def main():
         AP_3 = 0
         for i, (input_values, gt_score, keypoint_smoothed, keypoint, mel_score_seq, sample_rate, file_path, _) in enumerate(tqdm_bar):
             
-            # forward sample through model to get greedily predicted transcription ids
-
             input_values = input_values.to("cuda")
             gt_score = gt_score.to("cuda")
             mel_score_seq = mel_score_seq.to("cuda") 
@@ -107,14 +99,9 @@ def main():
             desc = f"Epoch {epoch} | LR {scheduler.get_last_lr()} | Iteration {i} | Loss {round(loss.item(), 5)} | AP: {round(AP / n_count, 4)} | AP@3: {round(AP_3 / n_count, 4)}"
             tqdm_bar.set_description(desc)
 
-
-            # if i % 20 == 0:
-            #     print(f"Epoch {epoch} | LR {scheduler.get_last_lr()} | Iteration {i} | Loss {loss.item()}")
-
         if epoch % 1 == 0:
             with torch.no_grad():
                 plt.clf()
-                # import ipdb; ipdb.set_trace()
                 
                 plt.plot(logits[0].cpu().numpy(), label='logits')
                 plt.plot(gt_score[0].cpu().numpy(), label='label')
@@ -147,8 +134,7 @@ def main():
                 mel_score_seq = mel_score_seq.to("cuda")
                 
                 logits = model(input_values, mel_score_seq) 
-                # logits = model(input_values).logits.squeeze(-1)
-                # loss = mse_loss(torch.sigmoid(logits), gt_score)
+
                 zero = torch.tensor(0.0).to("cuda")   
                 loss = mse_loss(logits, gt_score) + mse_loss(cosine(logits, gt_score), zero)
                 mean_loss += loss.item()
@@ -210,33 +196,23 @@ def main():
 
                 plt.savefig(f"vis-{exp_name}/x_test.png")
                 plt.close()
-
-                # import ipdb; ipdb.set_trace()
             
         scheduler.step()
 
 
-def inference():
+def validate():
     processor = None
-    # processor, model = init_wav2vec()
     model = init_imagebind()
 
-    
     model = model.to("cuda")
-    # model.load_state_dict(torch.load("save-2/best_model_norm.pth"))
-    # model.load_state_dict(torch.load("save-version3/best_model_AP.pth"))
-
 
     model.load_state_dict(torch.load("save/best_model_version1_with_skip.pth"))
-
-
 
     model.eval()
 
     root = "/dockerx/local/data/AVSync15/train"
     label = "/dockerx/local/data/AVSync15/train_curves_npy"
-    # root = "/dockerx/local/data/AVSync15/test"
-    # label = "/dockerx/local/data/AVSync15/test_curves_npy"
+
 
     val_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "test")
 
@@ -267,41 +243,6 @@ def inference():
                 AP_3 += val_dataset.precision(mel_score_seq[n], gt_score[n], threshould=3)
                 n_count += 1
 
-            
-
-            # plt.clf()
-            # plt.plot(logits[0].cpu().numpy(), label='Predict')
-            # plt.plot(gt_score[0].cpu().numpy(), label='Ground Truth')
-            # # plt.plot(mel_score_seq[0].cpu().numpy(), label='mel_score')
-
-
-            # # plt.title(f"file_path: {file_path[0]}")
-            
-            # plt.legend()
-            
-            # name = file_path[0].split("/")[-1].split(".")[0]
-            # cate = file_path[0].split("/")[-2]
-            
-            # os.makedirs(f"vis-last-new/{cate}", exist_ok=True)
-            # plt.savefig(f"vis-last-new/{cate}/{name}.png")
-
-            
-            # plt.clf()
-            # plt.close()
-
-            # save npy
-            # os.makedirs("prediction/motion", exist_ok=True)
-            # os.makedirs("prediction/audio", exist_ok=True)
-
-
-            # output_name = f'prediction/motion/{file_path[0].split("/")[-1].split(".")[0]}.npy'
-            # np.save(output_name, logits[0].cpu().numpy())
-
-
-            # output_name = f'prediction/audio/{file_path[0].split("/")[-1].split(".")[0]}.npy'
-            # np.save(output_name, mel_score_seq[0].cpu().numpy())
-
-            
         mean_loss = mean_loss / count
      
         print(f"Validation loss: {mean_loss}")
@@ -336,31 +277,21 @@ def predict():
         n_count = 0
         for i, (input_values, gt_score, keypoint_smoothed, keypoint, mel_score_seq, sample_rate, file_path, _) in enumerate(tqdm(val_dataloader)):
             
-
-
-
             name = file_path[0].split("/")[-1].split(".mp4")[0]
             cate = file_path[0].split("/")[-2]
 
             # save plot
-
             input_values = input_values.to("cuda")
             mel_score_seq = mel_score_seq.to("cuda")
             
             logits = model(input_values, mel_score_seq)
 
             plt.clf()
-            # plt.plot(logits[0].cpu().numpy(), label='logits')
-            # plt.plot(mel_score_seq[0].cpu().numpy(), label='mel_score')
-            # plt.clf()
+
             plt.plot(logits[0].cpu().numpy(), label='Predict')
             plt.plot(gt_score[0].cpu().numpy(), label='GT')
-
-        # plt.title(f"file_path: {file_path[0.split('/')[-1]}")
-        
+       
             plt.legend()
-            
-
             plt.savefig(f"vis-last-new/{name}.png")
 
         
@@ -371,10 +302,8 @@ def predict():
             # os.makedirs(f"prediction/motion/{cate}", exist_ok=True)
             # os.makedirs(f"prediction/audio/{cate}", exist_ok=True)
 
-
             # output_name = f'prediction/motion/{cate}/{name}.npy'
             # np.save(output_name, logits[0].cpu().numpy())
-
 
             # output_name = f'prediction/audio/{cate}/{name}.npy'
             # np.save(output_name, mel_score_seq[0].cpu().numpy())
@@ -382,5 +311,5 @@ def predict():
 
 if __name__ == "__main__":
     # predict()
-    inference()
-    # main()
+    validate()
+    # train()
