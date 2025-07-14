@@ -13,6 +13,12 @@ Offical code of paper KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchroni
 
 1. Keyframe localization
 
+```bash
+cd motion_scores/network
+python main.py --mode predict
+
+```
+
 2. Keyframe generator
 
 ```bash

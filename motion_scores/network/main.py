@@ -310,6 +310,18 @@ def predict():
 
 
 if __name__ == "__main__":
-    # predict()
-    validate()
-    # train()
+    import argparse
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Train, predict or validate the model.")
+    parser.add_argument("--mode", type=str, choices=["train", "predict", "validate"], required=True, help="Mode to run the script in: 'train', 'predict', or 'validate'.")
+
+    args = args.parse_args()
+    if args.mode == "train":
+        train()
+    elif args.mode == "predict":
+        predict()
+    elif args.mode == "validate":
+        validate()
+    else:
+        print("Invalid mode. Please choose 'train', 'predict', or 'validate'.")
