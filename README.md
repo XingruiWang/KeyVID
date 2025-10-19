@@ -1,11 +1,21 @@
-# 🎬 KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation
-
-[![Project Page](https://img.shields.io/badge/Project%20Page-KeyVID-0a7aca?logo=globe&logoColor=white)](https://xingruiwang.github.io/projects/KeyVID/)
-[![arXiv](https://img.shields.io/badge/arXiv-2504.09656-b31b1b.svg)](https://arxiv.org/pdf/2504.09656)
-![License](https://img.shields.io/github/license/XingruiWang/KeyVID)
+<h1 align="center">🎬 KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation</h1>
 
 <p align="center">
-  <img src="https://xingruiwang.github.io/projects/KeyVID/static/videos/teaser_small.gif" width="80%">
+  <a href="https://xingruiwang.github.io/projects/KeyVID/">
+    <img src="https://img.shields.io/badge/Project%20Page-KeyVID-0a7aca?logo=globe&logoColor=white" alt="Project Page Badge">
+  </a>
+  <a href="https://arxiv.org/pdf/2504.09656">
+    <img src="https://img.shields.io/badge/arXiv-2504.09656-b31b1b.svg" alt="arXiv Badge">
+  </a>
+  <img src="https://img.shields.io/github/license/XingruiWang/KeyVID" alt="License Badge">
+</p>
+
+
+
+<p align="center">
+  <a href="https://xingruiwang.github.io/projects/KeyVID/static/videos/teaser.mp4">
+    <img src="https://xingruiwang.github.io/projects/KeyVID/static/videos/teaser_small.gif" width="80%" alt="KeyVID Teaser">
+  </a>
 </p>
 
 <p align="center">
