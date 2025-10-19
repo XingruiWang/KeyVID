@@ -8,6 +8,12 @@
   <img src="https://xingruiwang.github.io/projects/KeyVID/static/videos/teaser_small.gif" width="80%">
 </p>
 
+<p align="center">
+<video id="teaser-video" autoplay preload muted loop playsinline>
+  <source src="./static/videos/teaser.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+</p>
 Official repository for **KeyVID**, presented in  **“KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation.”**  
 This work introduces a unified diffusion framework that generates temporally coherent videos conditioned on audio, guided by adaptive keyframe localization.
 
