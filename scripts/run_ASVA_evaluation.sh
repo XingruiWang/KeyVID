@@ -111,17 +111,21 @@ elif [ $EXPSET == "asva_12_kf" ]; then
     FS=6
     video_length=12
 
-
-
 elif [ $EXPSET == "asva_12_kf_interp" ]; then
     config='configs/inference_512_asva_12_keyframe_kf_freenoise.yaml'
+    exp_root=${save_root}'/asva/asva_12_kf_interp/reproduce_interp'
+
     # exp_root=${save_root}'/asva/asva_12_kf_interp/epoch=969-step=11640-uniform'
     # exp_root=${save_root}'/asva/asva_12_kf_interp/open_domain-interp'
     # exp_root=${save_root}'/asva/asva_12_kf_interp_no_idx/epoch=849-step=10200-interp'
     # 
-    checkpoint='/dockerx/share/Dynamicrafter_audio/main/save/asva_12_kf-interp/asva_12_kf-interp/training_512_avsyn_qformer_12_keyframe_framequery_60audio_random_frames_fps_cf/checkpoints/epoch=969-step=11640.ckpt'
+    # checkpoint='/dockerx/groups/asva_12_kf-interp/asva_12_kf-interp/training_512_avsyn_qformer_12_keyframe_framequery_60audio_random_frames_fps_cf/checkpoints/epoch=969-step=11640.ckpt'
+    checkpoint='/dockerx/share/KeyVID/main/save/asva_12_kf-interp-more/training_512_avsyn_qformer_12_keyframe_framequery_60audio_random_frames_fps_cf/checkpoints/epoch=1479-step=17760.ckpt'
+
     FS=24
     video_length=48
+
+    keyframe_gen_dir='/dockerx/groups/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples'
 fi
 
 # panda:
@@ -141,9 +145,10 @@ run_asva() {
     local cfg_audio=$2
     local cfg_img=$3
     local inpainting_end_step=$4
+    local cfg_audio_2=$5
     CUDA_VISIBLE_DEVICES=$device_id python -W ignore scripts/evaluation/animation_gen.py \
     --config ${config} \
-    --exp_root ${exp_root}_audio_${cfg_audio}_img_${cfg_img} \
+    --exp_root ${exp_root}_audio_${cfg_audio}_img_${cfg_img}_kf_${cfg_audio_2} \
     --checkpoint ${checkpoint} \
     --dataset AVSync15 \
     --height 320 \
@@ -161,7 +166,8 @@ run_asva() {
     --cfg_audio $cfg_audio \
     --cfg_img $cfg_img \
     --multiple_cond_cfg \
-    --interp 
+    --interp \
+    --keyframe_gen_dir $keyframe_gen_dir
     # --inpainting_end_step ${inpainting_end_step}
 }
 
@@ -179,51 +185,36 @@ run_asva() {
 # wait 
 
 for ((i=0; i<8; i++)); do
-    run_asva $i 4.0 2.0 0
+    keyframe_gen_dir='/dockerx/groups/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples'
+    run_asva $i 7.5 2.0 0 7.5 &
     sleep 1
 done
 
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 7.5 2.0 0
-#     sleep 1
-# done
+wait
 
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 9.0 2.0 30 &
-#     sleep 1
-# done
+for ((i=0; i<8; i++)); do
+    keyframe_gen_dir='/dockerx/groups/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_9.0_img_2.0/samples'
+    run_asva $i 9.0 2.0 0 9.0 &
+    sleep 1
+done
 
-# wait
+wait
 
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 11.0 2.0 30 &
-#     sleep 1
-# done
+for ((i=0; i<8; i++)); do
+    keyframe_gen_dir='/dockerx/groups/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples'
+    run_asva $i 11.0 2.0 0 7.5 &
+    sleep 1
+done
 
-# wait
+wait
 
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 9.0 2.0 50 &
-#     sleep 1
-# done
+for ((i=0; i<8; i++)); do
+    keyframe_gen_dir='/dockerx/groups/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_9.0_img_2.0/samples'
+    run_asva $i 11.0 2.0 0 9.0 &
+    sleep 1
+done
 
-# wait
-
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 11.0 2.0 50 &
-#     sleep 1
-# done
-
-# wait
-
-
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 7.5 2.0 30 &
-#     sleep 1
-# done
-
-# wait
-
+wait
 
 # for ((i=0; i<8; i++)); do
 #     run_asva $i 7.5 2.0 0 &
@@ -233,22 +224,8 @@ done
 # wait
 
 # for ((i=0; i<8; i++)); do
-#     run_asva $i 4.0 2.0 &
+#     run_asva $i 8 2.0 0 &
 #     sleep 1
 # done
 
 # wait
-
-
-# for ((i=0; i<8; i++)); do
-#     run_asva $i 9.0 2.0 &
-#     sleep 1
-# done
-
-# wait
-
-# for ((i=0; i<8; i++)); do
-#     # run_asva $i 11.0 2.0
-#     run_asva $i 11.0 2.0 &
-#     sleep 1
-# done

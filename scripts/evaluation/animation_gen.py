@@ -53,7 +53,8 @@ if __name__ == "__main__":
     parser.add_argument("--rank", type=int, default=0, help="rank of current gpu")
     parser.add_argument("--swap_audio", action='store_true', default=False, help="swap audio or not")
     parser.add_argument("--inpainting", action='store_true')
-    parser.add_argument("--inpainting_end_step", type=int, default=0, help="0 - 90",)
+    parser.add_argument("--inpainting_end_step", type=int, default=0, help="0 - 90")
+    parser.add_argument("--keyframe_gen_dir", type=str, default="/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples", help="path of keyframe results")
 
     args = parser.parse_args()
     
@@ -80,6 +81,11 @@ if __name__ == "__main__":
     #     device=torch.device("cuda"),
     #     dtype=torch.float32
     # )
+
+    if args.keyframe_gen_dir:
+        print("New experiment with keyframe results args")
+        from asva.pipeline_audio_cond_animation_freenoise_inpainting_new import run_inference as run_inference_freenoise
+        run_inference_freenoise(args, gpu_num=8, gpu_no=args.rank)
 
     if 'panda' in args.config:
         print("Running inference without audio")

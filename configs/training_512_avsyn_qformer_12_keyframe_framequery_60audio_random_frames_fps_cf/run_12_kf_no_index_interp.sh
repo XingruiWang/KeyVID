@@ -10,9 +10,9 @@ name="training_512_avsyn_qformer_12_keyframe_framequery_60audio_random_frames_fp
 config_file=configs/${name}/config_12_kf_no_index_interp.yaml
 
 # save root dir for logs, checkpoints, tensorboard record, etc.
-save_root="save/asva_12_kf-interp"
+save_root="save/asva_12_kf-interp-more"
 
-HOST_GPU_NUM=8
+HOST_GPU_NUM=6
 
 
 
@@ -20,7 +20,7 @@ mkdir -p $save_root/$name
 
 
 python3 -m torch.distributed.launch \
---nproc_per_node=$HOST_GPU_NUM --nnodes=1 --master_addr=127.0.0.1 --master_port=12352 --node_rank=0 \
+--nproc_per_node=$HOST_GPU_NUM --nnodes=1 --master_addr=127.0.0.1 --master_port=12349 --node_rank=0 \
 ./main/trainer.py \
 --base $config_file \
 --train \

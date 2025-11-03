@@ -40,6 +40,8 @@ from avgen.models.audio_encoders import ImageBindSegmaskAudioEncoder
 from avgen.data.utils import AudioMelspectrogramExtractor, get_evaluation_data, load_av_clips_uniformly, load_v_clips_uniformly, load_av_clips_keyframe, load_audio_clips_uniformly, load_image, waveform_to_melspectrogram
 from avgen.utils import freeze_and_make_eval
 
+
+
 from imagebind.data import waveform2melspec
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
@@ -681,7 +683,7 @@ def load_data(video_path, filename, video_size=(256,256), video_frames=16, video
 
 
 
-def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[]):
+def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[]):
     transform = transforms.Compose([
         transforms.Resize(min(video_size)),
         transforms.CenterCrop(video_size),
@@ -705,9 +707,15 @@ def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, 
         category = filename.split("/")[0]
 
         # load keyframe idx
+        
         frame_npy_name = video_path.split("/")[-1].split(".")[0]+".npy"
-        frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/local/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
-        keyframe_save_path = '/dockerx/share/Dynamicrafter_audio/save/keyframe_idx'
+
+        # this is ground truth keyframe idx
+        # frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/groups/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
+        
+        # this is predicted keyframe idx
+        # keyframe_save_path = '/dockerx/share/Dynamicrafter_audio/save/keyframe_idx'
+        keyframe_save_path = '/dockerx/groups/keyframe_idx'
 
         keyframes = np.load(os.path.join(keyframe_save_path, category, frame_npy_name))
         keyframes = torch.tensor(keyframes).to(torch.float64)
@@ -719,7 +727,7 @@ def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, 
         # keyframes = torch.tensor(keyframes).to(torch.float64)
         # ====================
 
-        keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples"
+        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples"
         # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/open_domain-kf_audio_7.5_img_2.0/samples/"
         
         # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/epoch=849-step=10200-kf_audio_7.5_img_2.0/samples"
@@ -823,7 +831,6 @@ def image_guided_synthesis(model, prompts, videos, audios, keyframe_clips, keyfr
 
     img_emb = model.expand_keyframes(img_emb, 48, num_queries=model.image_proj_model.num_queries)
     
-    
     cond_emb = model.get_learned_conditioning(prompts)
     cond = {"c_crossattn": [torch.cat([cond_emb,img_emb], dim=1)]} # torch.Size([1, 333, 1024]) = torch.Size([1, 77, 1024]) +  torch.Size([1, 256, 1024])
 
@@ -849,12 +856,7 @@ def image_guided_synthesis(model, prompts, videos, audios, keyframe_clips, keyfr
         z = get_latent_z(model, videos) # b c t h w
         z_keyframe = get_latent_z(model, keyframe_clips) # b c t h w
 
-        if loop or interp: # change here
-            # img_cat_cond = torch.zeros_like(z)
-            # img_cat_cond[:,:,0,:,:] = z[:,:,0,:,:]
-            # img_cat_cond[:,:,-1,:,:] = z[:,:,-1,:,:]
-
-            # kf interp
+        if interp: # change here
 
             img_cat_cond = torch.zeros_like(z)
 
@@ -863,7 +865,6 @@ def image_guided_synthesis(model, prompts, videos, audios, keyframe_clips, keyfr
                 img_cat_cond[j, :, key_frame_indices_, :, :] = z_keyframe[j, :, :, :, :]
 
         else:
-            raise NotImplementedError
             img_cat_cond = z[:,:,:1,:,:]
             img_cat_cond = repeat(img_cat_cond, 'b c t h w -> b c (repeat t) h w', repeat=z.shape[2])
         cond["c_concat"] = [img_cat_cond] # b c t h w
@@ -1013,25 +1014,6 @@ def load_model_checkpoint(model, ckpt):
 
     model.load_pretrained_imagebind_model()
 
-# size mismatch for imagebind_model.modality_preprocessors.audio.pos_embedding_helper.pos_embed: copying a param with shape torch.Size([1, 229, 768]) from checkpoint, the shape in current model is torch.Size([1, 577, 768]).
-
-
-    # if freenoise
-    # img_proj_latent_weight = resume_pl_sd['state_dict']['image_proj_model.latents']
-    # reshape_target_length = model_cfg.params.image_proj_stage_config.params.video_length
-    # if img_proj_latent_weight.shape[1] == 12 * 16:
-    #     if reshape_target_length == 48:
-    #         img_proj_latent_weight = rearrange(img_proj_latent_weight, 'b (t l) d -> b d t l ', t = 12)
-    #         img_proj_latent_weight =  torch.nn.functional.interpolate(
-    #                                         img_proj_latent_weight, size=(reshape_target_length, 12), mode='bilinear', align_corners=False
-    #                                     )
-    #         img_proj_latent_weight = rearrange(img_proj_latent_weight, 'b d t l -> b (t l) d', t = reshape_target_length)
-            
-    #     print("Reshape image query shape", img_proj_latent_weight.shape) # 1, 256, 1024 
-    #     state_dict['image_proj_model.latents'] = img_proj_latent_weight
-    #     model.load_state_dict(state_dict)
-    #     print(">>> Resume from checkpoint: %s" % resume_checkpoint)
-
     return model
 
 
@@ -1136,14 +1118,7 @@ def run_inference(args, gpu_num=1, gpu_no=0):
     os.makedirs(fakedir_separate, exist_ok=True)
 
     data_dir = data_config['params']['validation']['params']['data_dir']
-    # filename_list = []
-    # for category in sorted(os.listdir(data_dir)):
-    #     if not category.startswith("lion"):
-    #         continue
-    #     sub_folder = os.path.join(data_dir, category)
-    #     for filename in sorted(os.listdir(sub_folder)):
-    #         if filename.endswith(".mp4"):
-    #             filename_list.append(f"{category}/{filename}")
+
     with open(data_config['params']['validation']['params']['filename_list']) as f:
         filename_list = [line.rstrip("\n") for line in f.readlines()]
     categories = set([filename.split("/")[0] for filename in filename_list])
@@ -1169,7 +1144,7 @@ def run_inference(args, gpu_num=1, gpu_no=0):
                 batch_filename_neg.append(negative_filename)
         
         sub_filename_list, data_list, caption_list, audio_list, raw_audios, raw_videos, keyframes, frame_strides, keyframe_clips = \
-            load_data_batch(data_dir, batch_filename, video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg)
+            load_data_batch(data_dir, batch_filename, args.keyframe_gen_dir,  video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg)
         videos = torch.cat(data_list, dim=0).to("cuda")
         audios = torch.cat(audio_list, dim=0).to("cuda")
         
@@ -1189,15 +1164,7 @@ def run_inference(args, gpu_num=1, gpu_no=0):
                                         args.unconditional_guidance_scale, args.cfg_img, args.cfg_audio, args.video_fps, args.text_input, args.multiple_cond_cfg, args.loop, args.interp, args.timestep_spacing, args.guidance_rescale)
             save_video_batch(batch_samples_i, [raw_audios[i]], batch_filename, fakedir_separate, fps=args.video_fps, loop=False, idx=[i])
         
-        # else
-        # batch_samples = image_guided_synthesis(model, caption_list, videos, audios, keyframes, frame_strides, \
-        #                                 noise_shape, 1, args.ddim_steps, args.ddim_eta, \
-        #                                 args.unconditional_guidance_scale, args.cfg_img, args.cfg_audio, args.video_fps, args.text_input, args.multiple_cond_cfg, args.loop, args.interp, args.timestep_spacing, args.guidance_rescale)
 
-        
-        # save_video_batch(batch_samples, raw_audios, batch_filename, fakedir, fps=args.video_fps, loop=False, idx=[0,1,2])
-        
-        #
         start_idx += batch_size
 
    

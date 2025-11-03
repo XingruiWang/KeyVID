@@ -1,8 +1,6 @@
 model:
-  pretrained_checkpoint: /dockerx/local/repo/DynamiCrafter/checkpoints/DynamiCrafter_512_Interp/model.ckpt
-  resume_checkpoint: ''
-  # resume_checkpoint: main/save/asva_12_kf_split_audio_no_frameidx-countinous-12/training_512_avsyn_qformer_12_keyframe_framequery_60audio_random_frames_fps_cf/checkpoints/epoch=519-step=6240.ckpt
-  # pretrained_checkpoint: checkpoints/asva_48_split_audio/epoch=579-step=13920.ckpt
+  pretrained_checkpoint: /dockerx/share/checkpoints/dynamicrafter_512_v1/model.ckpt
+  resume_checkpoint: 
   finetune: 2
   base_learning_rate: 1.0e-5
   scale_lr: False
@@ -147,8 +145,8 @@ data:
     train:
       target: lvdm.data.avsync15_interp.AVSync15
       params:
-        data_dir: /dockerx/local/data/AVSync15/train
-        keyframe_dir: /dockerx/local/data/AVSync15/train_curves_npy/  
+        data_dir: /dockerx/groups/data/AVSync15/train
+        keyframe_dir: /dockerx/groups/data/AVSync15/train_curves_npy/
         video_length: 12
         frame_stride: 1
         fixed_fps: 6
@@ -160,8 +158,8 @@ data:
     validation:
       target: lvdm.data.avsync15_interp.AVSync15
       params:
-        data_dir: /dockerx/local/data/AVSync15/test
-        keyframe_dir: /dockerx/local/data/AVSync15/test_curves_npy/  
+        data_dir: /dockerx/groups/data/AVSync15/test
+        keyframe_dir: /dockerx/groups/data/AVSync15/test_curves_npy/  
         video_length: 12
         frame_stride: 1
         fixed_fps: 6

@@ -114,8 +114,7 @@ def get_trainer_logger(lightning_config, logdir, on_debug):
                 }
             },
     }
-    # os.makedirs('save', exist_ok=True)
-
+    
     os.makedirs(os.path.join(logdir, "tensorboard"), exist_ok=True)
     default_logger_cfg = default_logger_cfgs["tensorboard"]
     if "logger" in lightning_config:
@@ -168,8 +167,6 @@ def load_checkpoints(model, model_cfg):
         mainlogger.info(">>> Load weights from pretrained checkpoint")
 
         pl_sd = torch.load(pretrained_ckpt, map_location="cpu")
-        # 
-        # import ipdb; ipdb.set_trace()
         
         if 'state_dict' in pl_sd.keys():
             # resume

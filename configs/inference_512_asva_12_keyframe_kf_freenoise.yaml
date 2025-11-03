@@ -148,9 +148,9 @@ data:
     validation:
       target: lvdm.data.avsync15.AVSync15
       params:
-        data_dir: /dockerx/local/AVSync15/videos
-        filename_list: /dockerx/local/AVSync15/test_demo.txt
-        # filename_list: /dockerx/local/AVSync15/test.txt
+        data_dir: /dockerx/groups/AVSync15/videos
+        # filename_list: /dockerx/local/AVSync15/test_demo.txt
+        filename_list: /dockerx/groups/AVSync15/test.txt
         video_length: 12
         frame_stride: 6
         load_raw_resolution: true
