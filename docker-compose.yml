@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  keyvid:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: keyvid-rocm:latest
+    container_name: keyvid-publish
+    
+    # Enable ROCm GPU access
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    
+    # Security options for ROCm
+    security_opt:
+      - seccomp:unconfined
+    
+    group_add:
+      - video
+    
+    # Mount volumes
+    volumes:
+      - .:/workspace
+      - /dockerx/share/KeyVID:/dockerx/share/KeyVID
+      - /dockerx/local/repo/DynamiCrafter/save:/dockerx/local/repo/DynamiCrafter/save
+    
+    # Environment variables
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0  # Adjust based on your GPU
+      - PYTORCH_ROCM_ARCH=gfx1030  # Adjust based on your GPU
+    
+    # Working directory
+    working_dir: /workspace
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    command: /bin/bash

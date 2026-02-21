@@ -2,16 +2,8 @@ import argparse
 import torch
 import sys
 sys.path.append(".")
-from asva.pipeline_audio_cond_animation_uniform_frame import run_inference as run_inference_uniform
-from asva.pipeline_audio_cond_animation_keyframe import run_inference as run_inference_keyframe
-from asva.pipeline_audio_cond_animation_keyframe_add_idx import run_inference as run_inference_keyframe_add_idx
-# from asva.pipeline_audio_cond_animation_freenoise import run_inference as run_inference_freenoise
-from asva.pipeline_audio_cond_animation_freenoise_inpainting import run_inference as run_inference_freenoise
-from asva.pipeline_audio_cond_animation_48 import run_inference as run_inference_48
-from asva.pipeline_audio_cond_animation_48_inpainting import run_inference as run_inference_48_inpainting
-from asva.pipeline_audio_cond_animation_60 import run_inference as run_inference_60
-from asva.pipeline_audio_cond_animation_no_audio import run_inference as run_inference_no_audio
-from asva.pipeline_dynamicrafter import run_inference as run_inference_dynamicrafter
+from asva.pipeline_audio_cond_animation_keyframe_add_idx import run_inference as run_inference_keyframe
+from asva.pipeline_audio_cond_animation_freenoise_inpainting_new import run_inference as run_inference_interp
 
 
 if __name__ == "__main__":
@@ -82,41 +74,14 @@ if __name__ == "__main__":
     #     dtype=torch.float32
     # )
 
-    if args.keyframe_gen_dir:
-        print("New experiment with keyframe results args")
-        from asva.pipeline_audio_cond_animation_freenoise_inpainting_new import run_inference as run_inference_freenoise
-        run_inference_freenoise(args, gpu_num=8, gpu_no=args.rank)
-
-    if 'panda' in args.config:
-        print("Running inference without audio")
-        run_inference_no_audio(args, gpu_num=8, gpu_no=args.rank)
-    elif 'freenoise' in args.config:
-        print("Running with freenoise")
-        run_inference_freenoise(args, gpu_num=8, gpu_no=args.rank)
-    elif args.inpainting:
-        print("Running with inpainting")
-        # run_inference_48_inpainting(args, gpu_num=7, gpu_no=args.rank)
-        run_inference_48_inpainting(args, gpu_num=8, gpu_no=args.rank)
-    elif 'uniform' in args.config:
-        print("Running with uniform frame")
-        run_inference_uniform(args, gpu_num=8, gpu_no=args.rank)
-    elif 'add_idx' in args.config:
-        print("Running with keyframe add idx")
-        run_inference_keyframe_add_idx(args, gpu_num=8, gpu_no=args.rank)
-    elif 'keyframe' in args.config:
-        print("Running with keyframe")
-        run_inference_keyframe(args, gpu_num=8, gpu_no=args.rank)
-    elif 'inference_512_asva_12' in args.config:
-        print("Running with 12 frames")
-        run_inference(args, gpu_num=8, gpu_no=args.rank)
-    elif '48' in args.config:
-        print("Running with 48 frames")
-        run_inference_48(args, gpu_num=8, gpu_no=args.rank)
-    elif 'inference_512_v1.0.yaml' in args.config:
-        print("Running with dynamicrafter")
-        run_inference_dynamicrafter(args, gpu_num=8, gpu_no=args.rank)
+    if args.interp:
+        run_inference_interp(args, gpu_num=8, gpu_no=args.rank)
+    # if args.inpainting:
+    #     print("Running with inpainting")
+    #     # run_inference_48_inpainting(args, gpu_num=7, gpu_no=args.rank)
+    #     run_inference_48_inpainting(args, gpu_num=8, gpu_no=args.rank)
     else:
-        print("Running inference with audio")
-        run_inference_uniform(args, gpu_num=8, gpu_no=args.rank)
+        run_inference_keyframe(args, gpu_num=8, gpu_no=args.rank)
+
     
 

@@ -10,8 +10,12 @@ main/save_freeze
 save_freeze
 prompts
 data
+checkpoint
 checkpoints
 results
+output
+outputs
+save_results
 backup
 LOG
 *.wav
@@ -19,3 +23,11 @@ scripts/motions/co-tracker
 *.mp4
 
 REAMME_Draft.md
+dev.log
+
+# Generated config files
+*.yaml.processed
+
+# Local environment configuration
+scripts/.env
+.env
