@@ -17,8 +17,8 @@ AVSYNC15_ROOT=./data/AVSync15
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-GENERATED_VIDEO_ROOT=/dockerx/groups/KeyVID_publish/outputs/repo/DynamiCrafter/save/asva/asva_12_kf_interp/reproduce_interp_audio_7.5_img_2.0_kf_7.5/ASVA
-RESULT_SAVE_PATH=outputs/repo/DynamiCrafter/save/asva/asva_12_kf_interp/reproduce_interp_audio_7.5_img_2.0_kf_7.5/metrics/eval_result.json
+GENERATED_VIDEO_ROOT=/dockerx/groups/KeyVID_publish/save_results/asva_interpolation
+RESULT_SAVE_PATH=outputs/repo/DynamiCrafter/save/asva/asva_12_kf_interp/reproduce_presave/metrics/eval_result.json
 # GENERATED_VIDEO_ROOT=$1
 # RESULT_SAVE_PATH=$2
 DATASET_ROOT="${AVSYNC15_ROOT:-${PROJECT_ROOT}/data/AVSync15}"

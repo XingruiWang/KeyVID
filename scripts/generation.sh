@@ -40,12 +40,12 @@ fi
 # Optional paths with defaults
 AVSYNC15_ROOT="${AVSYNC15_ROOT:-${PROJECT_ROOT}/data/AVSync15}"
 DATA_ROOT="${DATA_ROOT:-${PROJECT_ROOT}/outputs}"
+KEYFRAME_IDX_DIR="${KEYFRAME_IDX_DIR:-${PROJECT_ROOT}/save_results/prediction/motion}"
 
-save_root="${DATA_ROOT}/repo/DynamiCrafter/save"
+save_root="${DATA_ROOT}"
 
 # Checkpoint paths
 KF_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/keyframe_generation/generator_checkpoint.ckpt"
-# INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/interpolation/epoch=1119-step=17920.ckpt"
 INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/interpolation/epoch=3669-step=58720.ckpt"
 
 # Export data paths for potential use in configs
@@ -62,6 +62,14 @@ export PRETRAINED_CHECKPOINT="${CHECKPOINT_ROOT}/dynamicrafter_512_v1/model.ckpt
 # if [ "$EXPSET" == "asva_12_kf_index" ]; then
 #     # TODO: Implement keyframe index prediction
 
+keyframe_idx_dir="${KEYFRAME_IDX_DIR}"
+if [ "$EXPSET" == "asva_12_kf" ]; then
+    keyframe_idx_dir="/dockerx/groups/KeyVID_hf_data/save_results/prediction/motion"
+elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
+    keyframe_gen_dir="outputs/repo/DynamiCrafter/save/asva/asva_12_kf_add_idx_add_fps/epoch=1319-step=15840-kf_audio_7.5_img_2.0_kf_7.5/samples"
+    keyframe_idx_dir="/dockerx/groups/KeyVID_hf_data/save_results/prediction/motion"
+fi
+
 # 2. Generate keyframes
 if [ "$EXPSET" == "asva_12_kf" ]; then
     config='configs/inference/keyframe_generation.yaml'
@@ -69,7 +77,7 @@ if [ "$EXPSET" == "asva_12_kf" ]; then
     checkpoint="${KF_CHECKPOINT}"
     FS=6
     video_length=12
-    INTERP_ARGS=""
+    INTERP_ARGS="--keyframe_idx_dir $keyframe_idx_dir"
 
 # 3. Interpolate keyframes
 elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
@@ -77,10 +85,9 @@ elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
     exp_root=${save_root}'/asva/asva_12_kf_interp/reproduce_new_keyframe'
     checkpoint="${INTERP_CHECKPOINT}"
     # Keyframe generation results directory (from Step 1 output)
-    keyframe_gen_dir="outputs/repo/DynamiCrafter/save/asva/asva_12_kf_add_idx_add_fps/epoch=1319-step=15840-kf_audio_7.5_img_2.0_kf_7.5/samples"
     FS=24
     video_length=48
-    INTERP_ARGS="--interp --keyframe_gen_dir $keyframe_gen_dir"
+    INTERP_ARGS="--interp --keyframe_gen_dir $keyframe_gen_dir --keyframe_idx_dir $keyframe_idx_dir"
 
 else
     echo "Usage: bash scripts/generation.sh [asva_12_kf|asva_12_kf_interp]"
@@ -104,12 +111,19 @@ fi
 
 run_asva() {
     local device_id=$1
-    local cfg_audio=$2
+    local cfg_audio_stage1=$2
     local cfg_img=$3
-    local cfg_audio_2=$4
+    local cfg_audio_stage2=$4
+
+    if [ "$EXPSET" == "asva_12_kf" ]; then
+        local cfg_audio=${cfg_audio_stage1}
+    elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
+        local cfg_audio=${cfg_audio_stage2}
+    fi
+
     CUDA_VISIBLE_DEVICES=$device_id python -W ignore scripts/evaluation/animation_gen.py \
         --config ${config} \
-        --exp_root ${exp_root}_audio_${cfg_audio}_img_${cfg_img}_kf_${cfg_audio_2} \
+        --exp_root ${exp_root}_audio_${cfg_audio_stage1}_img_${cfg_img}_kf_${cfg_audio_stage2} \
         --checkpoint ${checkpoint} \
         --dataset AVSync15 \
         --height 320 \
@@ -129,11 +143,12 @@ run_asva() {
         --cfg_audio $cfg_audio \
         --cfg_img $cfg_img \
         --multiple_cond_cfg \
+        --keyframe_idx_dir ${KEYFRAME_IDX_DIR} \
         ${INTERP_ARGS}
 }
 
 for ((i=0; i<8; i++)); do
-    run_asva $i 9.0 2.0 7.5 &
+    run_asva $i 7.5 2.0 9.0 &
     sleep 1
 done
 

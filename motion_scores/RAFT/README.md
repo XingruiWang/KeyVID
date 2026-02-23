@@ -1,4 +1,23 @@
 # RAFT
+
+> **Note for KeyVID Project**: 
+> - **Location**: `motion_scores/RAFT/`
+> - **Purpose**: Computing optical flow for motion scoring pipeline
+> - **Pretrained models**: `models/` directory (raft-chairs.pth, raft-sintel.pth, raft-things.pth, raft-kitti.pth)
+> - **Main script**: `run_videodataset.sh` - Batch processing for video datasets with multi-GPU support
+> 
+> **Usage for KeyVID**:
+> ```bash
+> # Process video dataset with 8 GPUs in parallel
+> bash run_videodataset.sh
+> 
+> # Or customize VIDEO_PATH and SAVE_PATH in the script:
+> VIDEO_PATH=/path/to/your/videos
+> SAVE_PATH=/path/to/save/motion_scores
+> ```
+
+---
+
 This repository contains the source code for our paper:
 
 [RAFT: Recurrent All Pairs Field Transforms for Optical Flow](https://arxiv.org/pdf/2003.12039.pdf)<br/>

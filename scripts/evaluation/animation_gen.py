@@ -47,6 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("--inpainting", action='store_true')
     parser.add_argument("--inpainting_end_step", type=int, default=0, help="0 - 90")
     parser.add_argument("--keyframe_gen_dir", type=str, default="/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples", help="path of keyframe results")
+    parser.add_argument("--keyframe_idx_dir", type=str, default="save_results/prediction/motion", help="path of predicted keyframe index")
 
     args = parser.parse_args()
     

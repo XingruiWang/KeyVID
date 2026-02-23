@@ -1,0 +1,21 @@
+# Model weights
+models/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Output artifacts
+*.png
+*.jpg
+*.jpeg
+logs/
+
+# Environment
+.env
+*.so
+
+# IDE
+.vscode/
+.idea/

@@ -37,7 +37,7 @@ from utils.utils import find_file_with_prefix
 sys.path.append("../ASVA")
 from avgen.models.unets import AudioUNet3DConditionModel
 from avgen.models.audio_encoders import ImageBindSegmaskAudioEncoder
-from avgen.data.utils import AudioMelspectrogramExtractor, get_evaluation_data, load_av_clips_uniformly, load_v_clips_uniformly, load_av_clips_keyframe, load_audio_clips_uniformly, load_image, waveform_to_melspectrogram
+from avgen.data.utils import AudioMelspectrogramExtractor, get_evaluation_data, load_av_clips_uniformly, load_v_clips_uniformly, load_av_clips_keyframe, load_audio_clips_uniformly, load_image, waveform_to_melspectrogram, keypoint_detection, select_keyframe
 from avgen.utils import freeze_and_make_eval
 
 
@@ -683,7 +683,7 @@ def load_data(video_path, filename, video_size=(256,256), video_frames=16, video
 
 
 
-def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[]):
+def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[], keyframe_idx_dir='save_results/keyframe_idx'):
     transform = transforms.Compose([
         transforms.Resize(min(video_size)),
         transforms.CenterCrop(video_size),
@@ -713,25 +713,27 @@ def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256),
         # this is ground truth keyframe idx
         # frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/groups/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
         # this is predicted keyframe idx
-        keyframe_save_path = 'save_results/keyframe_idx'
 
-        keyframes = np.load(os.path.join(keyframe_save_path, category, frame_npy_name))
-        keyframes = torch.tensor(keyframes).to(torch.float64)
-
+        # keyframes = np.load(os.path.join("save_results/keyframe_idx", category, frame_npy_name))
+        # keyframes = torch.tensor(keyframes).to(torch.float64)
+        
+        
+        keyframes = []
+        for sub_name in ['_clip-00', '_clip-01', '_clip-02']:
+            frame_npy = np.load(os.path.join(keyframe_idx_dir, category, frame_npy_name.replace('.npy', sub_name+'.npy')))
+            keypoint = keypoint_detection(frame_npy, prominence=0.1)
+            
+            keyframe, frame_stride, keyframe_cond = select_keyframe(keypoint, 0, 12, 6, 24)
+            
+            
+            keyframes.append(keyframe_cond)
+        
         # # # ================= load uniform
         # keyframes = np.linspace(0, 48, num=13, dtype=int)[:-1]
         # # expand / repead
         # keyframes = np.resize(keyframes, (3, 12))
         # keyframes = torch.tensor(keyframes).to(torch.float64)
         # ====================
-
-        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/epoch=1339-step=16080-kf_audio_7.5_img_2.0/samples"
-        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_kf_add_idx_add_fps/open_domain-kf_audio_7.5_img_2.0/samples/"
-        
-        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/epoch=849-step=10200-kf_audio_7.5_img_2.0/samples"
-        # keyframe_gen_dir = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_12_uniform/epoch=549-step=6600_audio_4.0_img_2.0_inpainting_step_0/samples"
-
-        # keyframe_gen_dir = "/dockerx/groups/tmp/asva_12_kf_no_idx/epoch=849-step=10200-kf_audio_7.5_img_2.0/samples"
 
         
         keyframe_gen_path = [ os.path.join(keyframe_gen_dir, filename.replace('.mp4', f'_clip-0{str(i)}.mp4')) for i in range(num_clips_per_video)]
@@ -748,6 +750,7 @@ def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256),
             load_audio_as_melspectrogram=False
         )
 
+        # open domain video
         # load_videos, _ = load_v_clips_uniformly(
         #     "/dockerx/local/AVSync15/open_video/20250305_1237_Hammer_Strikes_Wood_simple_compose_01jnkp3kzbfhr8kngd25an5r0e.mp4", video_fps, video_frames, video_size, num_clips_per_video,
         #     load_audio_as_melspectrogram=True
@@ -1122,7 +1125,7 @@ def run_inference(args, gpu_num=1, gpu_no=0):
                 batch_filename_neg.append(negative_filename)
         
         sub_filename_list, data_list, caption_list, audio_list, raw_audios, raw_videos, keyframes, frame_strides, keyframe_clips = \
-            load_data_batch(data_dir, batch_filename, args.keyframe_gen_dir,  video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg)
+            load_data_batch(data_dir, batch_filename, args.keyframe_gen_dir,  video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg, keyframe_idx_dir=args.keyframe_idx_dir)
         videos = torch.cat(data_list, dim=0).to("cuda")
         audios = torch.cat(audio_list, dim=0).to("cuda")
         

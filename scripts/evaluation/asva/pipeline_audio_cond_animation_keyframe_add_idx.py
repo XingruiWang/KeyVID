@@ -672,7 +672,7 @@ def load_data(video_path, filename, video_size=(256,256), video_frames=16, video
 
 
 
-def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[]):
+def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, video_fps=8, num_clips_per_video=3, fps_condition_type="kfs", swap_audio=False, batch_filename_neg=[], keyframe_idx_dir='save_results/prediction/motion'):
     transform = transforms.Compose([
         transforms.Resize(min(video_size)),
         transforms.CenterCrop(video_size),
@@ -695,23 +695,39 @@ def load_data_batch(data_dir, filenames, video_size=(256,256), video_frames=16, 
         video_path = os.path.join(data_dir, filename)
         category = filename.split("/")[0]
 
-        ## load video
-
-
-        # frame_npy_name = video_path.split("/")[-1].split(".mp4")[0]+".npy"
-        frame_npy_name = video_path.split("/")[-1].split(".")[0]+".npy"
-        frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/local/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
-
-        load_videos, load_audios, keyframes, frame_strides = load_av_clips_keyframe(
-            video_path, video_fps, video_frames, video_size, num_clips_per_video, motion_score=frame_npy,
-            load_audio_as_melspectrogram=False
-        )
+        ## load keyframe idx
         
-        ### load gt keyframe idx
-        keyframe_save_path = '/dockerx/share/Dynamicrafter_audio/save/keyframe_idx'
+        keyframe_save_path = '../KeyVID_hf_data/processed/keyframe_idx_pred'
+        frame_npy_name = video_path.split("/")[-1].split(".mp4")[0]+".npy"
+
+        # if the name unmatched due to the prefix, e.g. DPMEoIfxrZY_000030_000040_0.0_9.0.npy -> DPMEoIfxrZY_000030_000040_0.npy
+        # keyframes = np.load(find_file_with_prefix(os.path.join(keyframe_save_path, category), frame_npy_name[:11]))
+        # normally,
         keyframes = np.load(os.path.join(keyframe_save_path, category, frame_npy_name))
-        keyframes = torch.tensor(keyframes).to(torch.float64)
+        # keyframes = torch.tensor(keyframes).to(torch.float64)
+        
+        
         # ============================================================
+        
+        ### Load pred keyframe idx, see motion_scores/network and save, 
+        # keyframes = []
+        # for sub_name in ['_clip-00', '_clip-01', '_clip-02']:
+        #     frame_npy = np.load(os.path.join(keyframe_idx_dir, category, frame_npy_name.replace('.npy', sub_name+'.npy')))
+        #     keypoint = keypoint_detection(frame_npy, prominence=0.1)
+            
+        #     keyframe, frame_stride, keyframe_cond = select_keyframe(keypoint, 0, 12, 6, 24)
+            
+            
+        #     keyframes.append(keyframe_cond)
+        # keyframe_save_path = 'output/keyframe_idx_pred'
+        # os.makedirs(os.path.join(keyframe_save_path, category), exist_ok=True)
+        # np.save(os.path.join(keyframe_save_path, category, frame_npy_name), keyframes.cpu().numpy())
+
+        
+        load_videos, load_audios, keyframes, frame_strides = load_av_clips_keyframe(
+            video_path, video_fps, video_frames, video_size, num_clips_per_video, motion_score=None,
+            load_audio_as_melspectrogram=False, saved_frame_idx=keyframes
+        ) # ? why need to pass saved_frame_idx here? For visualization the gt keyframe, actually not used for generation
         
         if fps_condition_type == "kfs":
             frame_strides_array = keyframe_array[1:]-keyframe_array[0:-1]
@@ -1018,7 +1034,7 @@ def run_inference(args, gpu_num=1, gpu_no=0):
                 batch_filename_neg.append(negative_filename)
         
         sub_filename_list, data_list, caption_list, audio_list, raw_audios, raw_videos, keyframes, frame_strides = \
-            load_data_batch(data_dir, batch_filename, video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg)
+            load_data_batch(data_dir, batch_filename, video_size=(args.height, args.width), video_frames=n_frames, video_fps=args.video_fps, fps_condition_type = model.fps_condition_type, swap_audio=args.swap_audio, batch_filename_neg=batch_filename_neg, keyframe_idx_dir=args.keyframe_idx_dir)
         videos = torch.cat(data_list, dim=0).to("cuda")
         audios = torch.cat(audio_list, dim=0).to("cuda")
         
