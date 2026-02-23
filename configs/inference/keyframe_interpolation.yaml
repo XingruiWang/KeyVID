@@ -146,7 +146,7 @@ data:
       target: lvdm.data.avsync15.AVSync15
       params:
         data_dir: ${AVSYNC15_VIDEOS}
-        # filename_list: /dockerx/local/AVSync15/test_demo.txt
+        # filename_list: ./data/AVSync15/test_demo.txt
         filename_list: ${AVSYNC15_TEST_LIST}
         video_length: 12
         frame_stride: 6

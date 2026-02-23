@@ -64,10 +64,10 @@ export PRETRAINED_CHECKPOINT="${CHECKPOINT_ROOT}/dynamicrafter_512_v1/model.ckpt
 
 keyframe_idx_dir="${KEYFRAME_IDX_DIR}"
 if [ "$EXPSET" == "asva_12_kf" ]; then
-    keyframe_idx_dir="/dockerx/groups/KeyVID_hf_data/save_results/prediction/motion"
+    keyframe_idx_dir="${KEYFRAME_IDX_DIR}"
 elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
     keyframe_gen_dir="outputs/repo/DynamiCrafter/save/asva/asva_12_kf_add_idx_add_fps/epoch=1319-step=15840-kf_audio_7.5_img_2.0_kf_7.5/samples"
-    keyframe_idx_dir="/dockerx/groups/KeyVID_hf_data/save_results/prediction/motion"
+    keyframe_idx_dir="${KEYFRAME_IDX_DIR}"
 fi
 
 # 2. Generate keyframes

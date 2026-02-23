@@ -1,8 +1,8 @@
 
 
-# VGG_PATH=/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video
-# debug_PATH=/dockerx/local/repo/DynamiCrafter/data/AVSync15/test_frames/
-# SAVE_PATH=/dockerx/local/data/VGGSound_audio_scores
+# VGG_PATH=./data/VGGSound/video
+# debug_PATH=./data/AVSync15/test_frames/
+# SAVE_PATH=./data/VGGSound_audio_scores
 
 
 VIDEO_PATH=/datapath/AVSync15/train

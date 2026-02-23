@@ -559,11 +559,11 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     # Create an instance of the AudioDataset
-    # root = '/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video'
-    # label = '/dockerx/local/data/VGGSound_audio_scores/label'
+    # root = './data/VGGSound/video'
+    # label = './data/VGGSound_audio_scores/label'
     # dataset = AudioDataset_clip(root_dir=root, label_dir=label, split="vgg_sound")
-    root = '/dockerx/share/DynamiCrafter/data/AVSync15/train'
-    label = '/dockerx/local/DynamiCrafter/data/AVSync15/train_curves_npy'
+    root = './data/AVSync15/train'
+    label = './data/AVSync15/train_curves_npy'
     dataset = AudioDataset_clip(root_dir=root, label_dir=label, split="test")
 
     # Create a DataLoader to load the dataset

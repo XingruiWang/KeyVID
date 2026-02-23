@@ -5,7 +5,7 @@
 #
 # Environment variables (optional):
 #   AVSYNC15_ROOT       - AVSync15 dataset root (default: ./data/AVSync15)
-#   AVSYNC_CKPT         - AVSync checkpoint path (default: /dockerx/groups/KeyVID_hf_model/avsync/.../checkpoint-40000)
+#   AVSYNC_CKPT         - AVSync checkpoint path
 #
 # Example with custom paths:
 #   export AVSYNC15_ROOT=/path/to/AVSync15
@@ -17,12 +17,12 @@ AVSYNC15_ROOT=./data/AVSync15
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-GENERATED_VIDEO_ROOT=/dockerx/groups/KeyVID_publish/save_results/asva_interpolation
+GENERATED_VIDEO_ROOT=${GENERATED_VIDEO_ROOT:-./save_results/asva_interpolation}
 RESULT_SAVE_PATH=outputs/repo/DynamiCrafter/save/asva/asva_12_kf_interp/reproduce_presave/metrics/eval_result.json
 # GENERATED_VIDEO_ROOT=$1
 # RESULT_SAVE_PATH=$2
 DATASET_ROOT="${AVSYNC15_ROOT:-${PROJECT_ROOT}/data/AVSync15}"
-AVSYNC_CKPT="${AVSYNC_CKPT:-/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000}"
+AVSYNC_CKPT="${AVSYNC_CKPT:-./checkpoint/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000}"
 GPU_ID=${3:-0}
 
 if [ -z "$GENERATED_VIDEO_ROOT" ] || [ -z "$RESULT_SAVE_PATH" ]; then

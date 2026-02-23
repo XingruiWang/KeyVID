@@ -3,7 +3,7 @@ import random
 import itertools
 
 import sys
-sys.path.append("/dockerx/groups/ASVA")
+sys.path.append(".")
 
 import numpy as np
 from einops import rearrange
@@ -273,8 +273,8 @@ class AudioVideoAlignedMultiPairDataset(Dataset):
 
 if __name__ == "__main__":
 	dataset = AudioVideoAlignedMultiPairDataset(
-		data_root="/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video",
-		example_list_path="/dockerx/groups/ASVA/datasets/VGGSS/train.txt",
+		data_root="./data/VGGSound/video",
+		example_list_path="./data/VGGSS/train.txt",
 		mode="test",
 		image_size=224,
 		video_fps=6,

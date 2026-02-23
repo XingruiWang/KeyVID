@@ -13,7 +13,7 @@ if __name__ == "__main__":
 	parser.add_argument("--generated_video_root", type=str, default="")
 	parser.add_argument("--num_clips_per_video", type=int, default=3)
 	parser.add_argument("--result_save_path", type=str, default="")
-	parser.add_argument("--avsync_ckpt", type=str, default="/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000")
+	parser.add_argument("--avsync_ckpt", type=str, default="./checkpoint/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000")
 
 	parser.add_argument("--image_h", type=int, default=256)
 	parser.add_argument("--image_w", type=int, default=256)

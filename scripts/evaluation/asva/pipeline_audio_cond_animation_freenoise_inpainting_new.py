@@ -711,7 +711,7 @@ def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256),
         frame_npy_name = video_path.split("/")[-1].split(".")[0]+".npy"
 
         # this is ground truth keyframe idx
-        # frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/groups/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
+        # frame_npy = np.load(find_file_with_prefix(os.path.join('./data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
         # this is predicted keyframe idx
 
         # keyframes = np.load(os.path.join("save_results/keyframe_idx", category, frame_npy_name))
@@ -752,7 +752,7 @@ def load_data_batch(data_dir, filenames, keyframe_gen_dir, video_size=(256,256),
 
         # open domain video
         # load_videos, _ = load_v_clips_uniformly(
-        #     "/dockerx/local/AVSync15/open_video/20250305_1237_Hammer_Strikes_Wood_simple_compose_01jnkp3kzbfhr8kngd25an5r0e.mp4", video_fps, video_frames, video_size, num_clips_per_video,
+        #     "./data/AVSync15/open_video/example.mp4", video_fps, video_frames, video_size, num_clips_per_video,
         #     load_audio_as_melspectrogram=True
         # )
         

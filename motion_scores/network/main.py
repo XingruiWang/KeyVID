@@ -31,15 +31,15 @@ def train():
     model = init_imagebind()
     
     model = model.to("cuda")
-    model.load_state_dict(torch.load("/dockerx/share/wav2vec/save/checkpoint-0-0.10344.pth"))
+    model.load_state_dict(torch.load("./checkpoint/motion_scores/checkpoint-0-0.10344.pth"))
     
     # init optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=1.5e-5)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.8)
 
     # init data
-    root = "/dockerx/share/DynamiCrafter/data/AVSync15/train"
-    label = "/dockerx/share/DynamiCrafter/data/AVSync15/train_curves_npy"
+    root = "./data/AVSync15/train"
+    label = "./data/AVSync15/train_curves_npy"
 
     train_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "train")
     val_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "test")
@@ -48,8 +48,8 @@ def train():
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=8)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=8)
 
-    # vgg_sound = '/dockerx/local/data/VGGSound/scratch/shared/beegfs/hchen/train_data/VGGSound_final/video'
-    # vgg_label = '/dockerx/local/data/VGGSound_audio_scores/labels/label_9438'
+    # vgg_sound = './data/VGGSound/video'
+    # vgg_label = './data/VGGSound_audio_scores/labels/label_9438'
     # vgg_sound_trainset =AudioDataset(root_dir=vgg_sound, label_dir=vgg_label, wav2vec_processor = processor, split = "vgg_sound")
     # vgg_sound_train_dataloader = torch.utils.data.DataLoader(vgg_sound_trainset, batch_size=16, shuffle=True)
     
@@ -210,8 +210,8 @@ def validate():
 
     model.eval()
 
-    root = "/dockerx/local/data/AVSync15/train"
-    label = "/dockerx/local/data/AVSync15/train_curves_npy"
+    root = "./data/AVSync15/train"
+    label = "./data/AVSync15/train_curves_npy"
 
 
     val_dataset = AudioDataset(root_dir=root, label_dir=label, wav2vec_processor = processor, split = "test")
@@ -260,7 +260,7 @@ def predict():
 
     model.eval()
 
-    root = "/dockerx/share/Dynamicrafter_audio/save/asva/asva_48/epoch=579-step=13920-inpainting_audio_7.5_img_2.0/ASVA"
+    root = "./outputs/asva/asva_48/samples/ASVA"
     label = None
 
     val_dataset = AudioDataset(root_dir=root, label_dir=None, wav2vec_processor = None, split = "all", format_="mp4")

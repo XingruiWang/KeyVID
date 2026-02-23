@@ -240,7 +240,7 @@ def demo_dataset(args, save_fig=False):
 
                     # output_name_video = os.path.dirname(output_name)+'.mp4'
                     # os.makedirs(os.path.dirname(output_name_video), exist_ok=True)
-                    # if save_fig and not os.path.exists(f"/dockerx/local/DynamiCrafter/data/AVSync15/test_flows/{cate}"):
+                    # if save_fig and not os.path.exists(f"./data/AVSync15/test_flows/{cate}"):
                     if save_fig :
                         # os.makedirs(os.path.dirname(output_name), exist_ok=True)
                     
@@ -302,7 +302,7 @@ def demo_vggsound(args):
     batch_size = args.batch_size
 
     # 只处理一个特定的视频文件
-    single_video_path = "/dockerx/share/KeyVID/rebuttal/downloaded_from_drive.mp4"
+    single_video_path = "./data/example_video.mp4"
     single_video_name = os.path.basename(single_video_path) 
     
     print(f"Processing single video: {single_video_name}")
@@ -404,9 +404,9 @@ if __name__ == '__main__':
     demo_vggsound(args)
     # only run one video instance
 
-    # with open("/dockerx/local/data/TheGreatestHits/train.txt") as f:
+    # with open("./data/TheGreatestHits/train.txt") as f:
     #     all_listed = f.readlines()
     #     all_listed = [instance.strip() for instance in all_listed]
     # for instance in all_listed:
-    #     if os.path.exists(os.path.join('/dockerx/local/data/TheGreatestHits/train_video_motion', instance.replace('mp4', 'npy'))):
+    #     if os.path.exists(os.path.join('./data/TheGreatestHits/train_video_motion', instance.replace('mp4', 'npy'))):
     #         print(instance)

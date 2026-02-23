@@ -23,8 +23,6 @@ services:
     # Mount volumes
     volumes:
       - .:/workspace
-      - /dockerx/share/KeyVID:/dockerx/share/KeyVID
-      - /dockerx/local/repo/DynamiCrafter/save:/dockerx/local/repo/DynamiCrafter/save
     
     # Environment variables
     environment:

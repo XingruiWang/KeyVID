@@ -33,7 +33,7 @@ class AVSyncClassifier(nn.Module):
 		return score
 
 
-def load_avsync_model(model_path="/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000/modules", use_safetensors = False):
+def load_avsync_model(model_path="./checkpoint/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000/modules", use_safetensors = False):
 	audio_encoder = AudioConv2DNet.from_pretrained(
 		os.path.join(model_path, "audio_encoder"), use_safetensors=use_safetensors
 	)

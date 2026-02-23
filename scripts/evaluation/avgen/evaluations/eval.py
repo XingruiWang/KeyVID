@@ -122,9 +122,9 @@ def evaluate_generation_results(
 		if keyframe_only:
 			category = groundtruth_video_name.split("/")[0]
 			frame_npy_name = groundtruth_video_name.split("/")[-1].split(".")[0]+".npy"
-			frame_npy = np.load(find_file_with_prefix(os.path.join('/dockerx/local/data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
+			frame_npy = np.load(find_file_with_prefix(os.path.join('./data/AVSync15/test_curves_npy', category), frame_npy_name[:11]))
 			
-			save_frame_idx_path = '/dockerx/share/Dynamicrafter_audio/save/keyframe_idx'
+			save_frame_idx_path = './outputs/keyframe_idx'
 			frame_idx = np.load(os.path.join(save_frame_idx_path, category, frame_npy_name))
 
 			
@@ -325,19 +325,19 @@ def evaluate_generation_results(
 
 	# 	# np.save(f"{result_save_path.replace('.json', '_ground_truth.npy')}", ground_truth_video_npy)
 	# 	# np.save(f"{result_save_path.replace('.json', '_generated.npy')}", generated_video_npy)
-	# 	print("Saving fvmd npy files to /dockerx/local/tmp/fvmd/ ...")
-	# 	np.save(f"/dockerx/local/tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy", ground_truth_video_npy)
-	# 	if not os.path.exists(f"/dockerx/local/tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy"):
-	# 		np.save(f"/dockerx/local/tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy", ground_truth_video_npy)
+	# 	print("Saving fvmd npy files to ./tmp/fvmd/ ...")
+	# 	np.save(f"./tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy", ground_truth_video_npy)
+	# 	if not os.path.exists(f"./tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy"):
+	# 		np.save(f"./tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy", ground_truth_video_npy)
 	# 	else:
-	# 		print("File already exists: ", f"/dockerx/local/tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy")
-	# 	gen_save_path = f"/dockerx/local/tmp/fvmd/fvmd_generated.npy"
+	# 		print("File already exists: ", f"./tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy")
+	# 	gen_save_path = f"./tmp/fvmd/fvmd_generated.npy"
 	# 	np.save(gen_save_path, generated_video_npy)
 	# 	print("Done.")
 
 	# 	fvmd_value = fvmd(log_dir=result_save_path.replace('.json', '_fvmd.json'),  
 	# 					gen_path=gen_save_path,
-	# 					gt_path=f"/dockerx/local/tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy",
+	# 					gt_path=f"./tmp/fvmd/fvmd_ground_truth_{video_num_frame}.npy",
 	# 					# device_ids=[0,1,2,3,4,5,6]
 	# 					)
 	#####################################################################################

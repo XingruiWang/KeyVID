@@ -1,40 +1,26 @@
-<h1 align="center">🎬 KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation</h1>
+<h1 align="center">KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation</h1>
 
 <p align="center">
-  <a href="https://xingruiwang.github.io/projects/KeyVID/">
-    <img src="https://img.shields.io/badge/Project%20Page-KeyVID-0a7aca?logo=globe&logoColor=white" alt="Project Page">
-  </a>
-  <a href="https://arxiv.org/pdf/2504.09656">
-    <img src="https://img.shields.io/badge/arXiv-2504.09656-b31b1b.svg" alt="arXiv">
-  </a>
-  <img src="https://img.shields.io/github/license/XingruiWang/KeyVID" alt="License">
+  <em>Anonymous submission — code for review purposes only</em>
 </p>
-
-<p align="center">
-  <a href="https://xingruiwang.github.io/projects/KeyVID/">
-    <img src="https://xingruiwang.github.io/projects/KeyVID/static/videos/teaser_small.gif" width="80%" alt="KeyVID Teaser">
-  </a>
-</p>
-
-Official repository for **KeyVID** - a unified diffusion framework that generates temporally coherent videos conditioned on audio, guided by adaptive keyframe localization.
 
 ---
 
-## 📦 Release Plan
+## Release Plan
 
 - [ ] Keyframe Localization Code — Coming soon  
-- [x] Keyframe Generation Code — Released ✅
-- [x] Interpolation Code — Released ✅
+- [x] Keyframe Generation Code — Released
+- [x] Interpolation Code — Released
 - [ ] Training Code — Coming soon
-- [ ] Pre-trained Checkpoints — Coming soon (HuggingFace)
+- [ ] Pre-trained Checkpoints — Coming soon
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/XingruiWang/KeyVID.git
+# git clone <repo_url>
 cd KeyVID
 pip install -r requirements.txt
 
@@ -42,7 +28,7 @@ pip install -r requirements.txt
 mkdir -p checkpoint/KeyVID/keyframe_generation checkpoint/KeyVID/asva_12_kf_interp
 mkdir -p data/AVSync15/videos
 
-# Download checkpoints (coming soon on HuggingFace)
+# Download checkpoints (will be released upon acceptance)
 # Place in: checkpoint/KeyVID/keyframe_generation/epoch=859-step=10320.ckpt
 #           checkpoint/KeyVID/asva_12_kf_interp/epoch=1479-step=17760.ckpt
 
@@ -66,27 +52,27 @@ bash scripts/avsync15_metric.sh                # Compute metrics
 
 **Notes**: 
 - If you get "CHECKPOINT_ROOT is not set" error, make sure to export it in step 4
-- Evaluation requires AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+- Evaluation requires AVSync checkpoint (see Evaluation section below)
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 
 ```
 KeyVID/                                     # Project root
 ├── checkpoint/                             # Model checkpoints (git-ignored)
 │   └── KeyVID/                             # Checkpoint root (set via CHECKPOINT_ROOT)
 │       ├── keyframe_generation/
-│       │   └── epoch=859-step=10320.ckpt  # ⚠️ REQUIRED
+│       │   └── epoch=859-step=10320.ckpt  # REQUIRED
 │       └── asva_12_kf_interp/
-│           └── epoch=1479-step=17760.ckpt # ⚠️ REQUIRED
+│           └── epoch=1479-step=17760.ckpt # REQUIRED
 │
 ├── .checkpoints/                           # Downloaded by Imagebind
 │
 ├── data/                                   # Input datasets (git-ignored)
 │   └── AVSync15/                           # Dataset
-│       ├── videos/                         # ⚠️ REQUIRED
-│       └── test.txt                        # ⚠️ REQUIRED
+│       ├── videos/                         # REQUIRED
+│       └── test.txt                        # REQUIRED
 │
 ├── outputs/                                # Inference outputs (git-ignored)
 ├── save_results/                           # Saved evaluation results (git-ignored)
@@ -108,19 +94,19 @@ KeyVID/                                     # Project root
 ```
 
 **External Checkpoints** (for evaluation only):
-- AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+- AVSync checkpoint: `<path_to_avsync_checkpoint>/checkpoint-40000`
   - Used by `scripts/avsync15_metric.sh` for audio-visual synchronization metrics
   - Can be customized via `AVSYNC_CKPT` environment variable
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 ### Option 1: Conda/Pip
 
 ```bash
 # Clone repository
-git clone https://github.com/XingruiWang/KeyVID.git
+# git clone <repo_url>
 cd KeyVID
 
 # Create environment
@@ -165,7 +151,7 @@ bash scripts/generation.sh asva_12_kf
 
 ---
 
-## 🎬 Inference
+## Inference
 
 KeyVID uses a two-stage pipeline:
 
@@ -192,7 +178,7 @@ bash scripts/generation.sh asva_12_kf_interp
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Required: Set Checkpoint Path
 
@@ -233,9 +219,9 @@ for ((i=0; i<N; i++)); do  # Change N to your GPU count
 
 ---
 
-## 📥 Download Checkpoints
+## Download Checkpoints
 
-**Status**: Coming soon on HuggingFace.
+**Status**: Will be released upon acceptance.
 
 ### Inference Checkpoints
 
@@ -251,13 +237,11 @@ export CHECKPOINT_ROOT=./checkpoint/KeyVID
 ### Evaluation Checkpoint (Optional)
 
 For quantitative evaluation metrics (AlignSync, RelSync), you need:
-- **Location**: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
-- **Used by**: `scripts/avsync15_metric.sh`
 - **Configure via**: `export AVSYNC_CKPT=/path/to/avsync/checkpoint-40000`
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Checkpoint not found
 ```bash
@@ -285,7 +269,7 @@ python -c "import torch; print(torch.cuda.is_available())"
 
 ---
 
-## 📊 Evaluation
+## Evaluation
 
 Evaluate generated videos with quantitative metrics:
 
@@ -298,14 +282,14 @@ bash scripts/avsync15_metric.sh
 ```
 
 **Metrics computed**:
-- FID (Fréchet Inception Distance)
-- FVD (Fréchet Video Distance)
+- FID (Frechet Inception Distance)
+- FVD (Frechet Video Distance)
 - CLIP-Sim (Image-Audio and Image-Text similarity)
 - RelSync (Relative audio-visual synchronization)
 - AlignSync (Alignment synchronization)
 
 **Requirements**:
-- AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+- AVSync checkpoint (set via `AVSYNC_CKPT` env variable)
 - Ground truth videos: `data/AVSync15/videos/`
 - Generated videos: `outputs/repo/DynamiCrafter/save/asva/.../samples/`
 
@@ -318,31 +302,18 @@ bash scripts/avsync15_metric.sh
 
 ---
 
-## 🎓 Training
+## Training
 
 **Status**: Training code coming soon.
 
 Two-stage training:
-1. **Keyframe Generation**: Audio + Image + Frame indices → Keyframes
-2. **Interpolation**: Keyframes + Audio → Full video
+1. **Keyframe Generation**: Audio + Image + Frame indices -> Keyframes
+2. **Interpolation**: Keyframes + Audio -> Full video
 
 Configurations available in `configs/training/`.
 
 ---
 
-## 📚 Citation
-
-```bibtex
-@article{wang2025keyvid,
-  title={KeyVID: Keyframe-Aware Video Diffusion for Audio-Synchronized Visual Animation},
-  author={Wang, Xingrui and Liu, Jiang and Wang, Ze and Yu, Xiaodong and Wu, Jialian and Sun, Ximeng and Su, Yusheng and Yuille, Alan and Liu, Zicheng and Barsoum, Emad},
-  journal={arXiv preprint arXiv:2504.09656},
-  year={2025}
-}
-```
-
----
-
-## 📄 License
+## License
 
 See [LICENSE](LICENSE) file for details.
