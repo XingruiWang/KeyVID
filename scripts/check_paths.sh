@@ -39,8 +39,8 @@ DATA_ROOT="${DATA_ROOT:-${PROJECT_ROOT}/outputs}"
 AVSYNC_CKPT="${AVSYNC_CKPT:-${PROJECT_ROOT}/checkpoint/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000/modules}"
 
 # Checkpoint paths
-KF_CHECKPOINT="${CHECKPOINT_ROOT}/keyframe_generation/epoch=859-step=10320.ckpt"
-INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/asva_12_kf_interp/epoch=1479-step=17760.ckpt"
+KF_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/keyframe_generation/generator_checkpoint.ckpt"
+INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/interpolation/epoch=3669-step=58720.ckpt"
 PRETRAINED_CHECKPOINT="${CHECKPOINT_ROOT}/dynamicrafter_512_v1/model.ckpt"
 
 # Data paths
