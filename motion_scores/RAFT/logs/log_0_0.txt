@@ -1,0 +1,32 @@
+Rank 0 Node 0 | start 0 end 30
+Total instances: 244
+2015-02-16-17-08-51_denoised_thumb.mp4
+2015-02-16-17-27-53_denoised_thumb.mp4
+2015-02-16-17-32-18_denoised_thumb.mp4
+2015-02-16-17-40-35_denoised_thumb.mp4
+2015-02-21-17-34-22_denoised_thumb.mp4
+2015-02-21-17-37-20_denoised_thumb.mp4
+2015-02-21-17-42-56_denoised_thumb.mp4
+2015-02-21-17-45-03_denoised_thumb.mp4
+2015-02-21-17-53-09_denoised_thumb.mp4
+2015-02-22-14-21-41_denoised_thumb.mp4
+2015-02-22-14-32-02_denoised_thumb.mp4
+2015-02-22-14-37-47_denoised_thumb.mp4
+2015-02-22-14-48-11_denoised_thumb.mp4
+2015-02-23-20-23-02_denoised_thumb.mp4
+2015-02-23-20-52-58_denoised_thumb.mp4
+2015-02-23-20-54-31_denoised_thumb.mp4
+2015-02-23-20-57-32_denoised_thumb.mp4
+2015-02-23-21-01-03_denoised_thumb.mp4
+2015-03-12-18-54-21_denoised_thumb.mp4
+2015-03-12-18-56-02_denoised_thumb.mp4
+2015-03-12-19-19-13_denoised_thumb.mp4
+2015-03-12-19-24-53_denoised_thumb.mp4
+2015-03-12-19-26-26_denoised_thumb.mp4
+2015-03-12-19-28-23_denoised_thumb.mp4
+2015-03-12-19-36-10_denoised_thumb.mp4
+2015-03-12-20-11-15_denoised_thumb.mp4
+2015-03-12-20-21-45_denoised_thumb.mp4
+2015-03-15-18-54-13_denoised_thumb.mp4
+2015-03-15-19-02-44_denoised_thumb.mp4
+2015-03-15-19-11-35_denoised_thumb.mp4
