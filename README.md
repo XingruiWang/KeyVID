@@ -6,15 +6,6 @@
 
 ---
 
-## Release Plan
-
-- [ ] Keyframe Localization Code — Coming soon  
-- [x] Keyframe Generation Code — Released
-- [x] Interpolation Code — Released
-- [ ] Training Code — Coming soon
-- [ ] Pre-trained Checkpoints — Coming soon
-
----
 
 ## Quick Start
 
