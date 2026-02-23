@@ -10,6 +10,7 @@ main/save_freeze
 save_freeze
 prompts
 data
+pretrained
 checkpoint
 checkpoints
 results
@@ -21,6 +22,8 @@ LOG
 *.wav
 scripts/motions/co-tracker
 *.mp4
+avgen1
+avsync1
 
 REAMME_Draft.md
 dev.log
@@ -31,3 +34,5 @@ dev.log
 # Local environment configuration
 scripts/.env
 .env
+motion_scores/omnimotion
+motion_scores/RAFT/models

@@ -36,6 +36,7 @@ fi
 # Set defaults for optional paths
 AVSYNC15_ROOT="${AVSYNC15_ROOT:-${PROJECT_ROOT}/data/AVSync15}"
 DATA_ROOT="${DATA_ROOT:-${PROJECT_ROOT}/outputs}"
+AVSYNC_CKPT="${AVSYNC_CKPT:-/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000/modules}"
 
 # Checkpoint paths
 KF_CHECKPOINT="${CHECKPOINT_ROOT}/keyframe_generation/epoch=859-step=10320.ckpt"
@@ -70,6 +71,10 @@ check_file() {
 check_file "$KF_CHECKPOINT"
 check_file "$INTERP_CHECKPOINT"
 check_file "$PRETRAINED_CHECKPOINT"
+echo ""
+
+echo "Evaluation Checkpoint:"
+check_file "$AVSYNC_CKPT"
 echo ""
 
 echo "Data Directories:"

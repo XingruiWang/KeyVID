@@ -44,8 +44,9 @@ DATA_ROOT="${DATA_ROOT:-${PROJECT_ROOT}/outputs}"
 save_root="${DATA_ROOT}/repo/DynamiCrafter/save"
 
 # Checkpoint paths
-KF_CHECKPOINT="${CHECKPOINT_ROOT}/keyframe_generation/generator_checkpoint.ckpt"
-INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/interpolation/epoch=1119-step=17920.ckpt"
+KF_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/keyframe_generation/generator_checkpoint.ckpt"
+# INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/interpolation/epoch=1119-step=17920.ckpt"
+INTERP_CHECKPOINT="${CHECKPOINT_ROOT}/KeyVID/interpolation/epoch=3669-step=58720.ckpt"
 
 # Export data paths for potential use in configs
 export AVSYNC15_TRAIN_DIR="${AVSYNC15_ROOT}/train"
@@ -73,10 +74,10 @@ if [ "$EXPSET" == "asva_12_kf" ]; then
 # 3. Interpolate keyframes
 elif [ "$EXPSET" == "asva_12_kf_interp" ]; then
     config='configs/inference/keyframe_interpolation.yaml'
-    exp_root=${save_root}'/asva/asva_12_kf_interp/reproduce_interp'
+    exp_root=${save_root}'/asva/asva_12_kf_interp/reproduce_new_keyframe'
     checkpoint="${INTERP_CHECKPOINT}"
     # Keyframe generation results directory (from Step 1 output)
-    keyframe_gen_dir="save_results/asva_keyframe"
+    keyframe_gen_dir="outputs/repo/DynamiCrafter/save/asva/asva_12_kf_add_idx_add_fps/epoch=1319-step=15840-kf_audio_7.5_img_2.0_kf_7.5/samples"
     FS=24
     video_length=48
     INTERP_ARGS="--interp --keyframe_gen_dir $keyframe_gen_dir"
@@ -132,7 +133,7 @@ run_asva() {
 }
 
 for ((i=0; i<8; i++)); do
-    run_asva $i 7.5 2.0 7.5 &
+    run_asva $i 9.0 2.0 7.5 &
     sleep 1
 done
 

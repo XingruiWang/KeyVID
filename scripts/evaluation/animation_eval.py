@@ -1,6 +1,6 @@
 import argparse
 import sys
-sys.path.append('./')
+# sys.path.append('./')
 from avgen.evaluations.eval import evaluate_generation_results
 from avgen.data.utils import get_evaluation_data
 
@@ -8,11 +8,12 @@ from avgen.data.utils import get_evaluation_data
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	
-	parser.add_argument("--dataset", type=str, default="AVSync15", help="AVSync15, Landscapes, or TheGreatestHits")
+	parser.add_argument("--dataset", type=str, default="AVSync15", help="Dataset name")
+	parser.add_argument("--dataset_root", type=str, default=None, help="Dataset root directory (default: ./data/AVSync15)")
 	parser.add_argument("--generated_video_root", type=str, default="")
 	parser.add_argument("--num_clips_per_video", type=int, default=3)
 	parser.add_argument("--result_save_path", type=str, default="")
-	parser.add_argument("--avsync_ckpt", type=str, default="/dockerx/groups/ASVA/checkpoints/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000")
+	parser.add_argument("--avsync_ckpt", type=str, default="/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000")
 
 	parser.add_argument("--image_h", type=int, default=256)
 	parser.add_argument("--image_w", type=int, default=256)
@@ -35,7 +36,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	
 	
-	video_root, video_names, categories, video_path_type = get_evaluation_data(args.dataset)
+	video_root, video_names, categories, video_path_type = get_evaluation_data(args.dataset, args.dataset_root)
 	
 	
 	print(

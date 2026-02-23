@@ -16,8 +16,8 @@ torchvision.set_video_backend("video_reader")
 import torchaudio
 from einops import rearrange, repeat
 
-from submodules.ImageBind.imagebind.models.imagebind_model import imagebind_huge, ModalityType
-from submodules.ImageBind.imagebind.data import load_and_transform_text, load_and_transform_vision_data
+from imagebind.models.imagebind_model import imagebind_huge, ModalityType
+from imagebind.data import load_and_transform_text, load_and_transform_vision_data
 
 
 class CLIPModel(nn.Module):

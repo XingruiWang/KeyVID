@@ -59,9 +59,14 @@ bash scripts/check_paths.sh
 # 6. Run inference
 bash scripts/generation.sh asva_12_kf          # Generate keyframes
 bash scripts/generation.sh asva_12_kf_interp   # Interpolate to full video
+
+# 7. (Optional) Run evaluation
+bash scripts/avsync15_metric.sh                # Compute metrics
 ```
 
-**Note**: If you get "CHECKPOINT_ROOT is not set" error, make sure to export it in step 4.
+**Notes**: 
+- If you get "CHECKPOINT_ROOT is not set" error, make sure to export it in step 4
+- Evaluation requires AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
 
 ---
 
@@ -76,7 +81,7 @@ KeyVID/                                     # Project root
 │       └── asva_12_kf_interp/
 │           └── epoch=1479-step=17760.ckpt # ⚠️ REQUIRED
 │
-├── .checkpoints/                           # Symlinked checkpoints (git-ignored)
+├── .checkpoints/                           # Downloaded by Imagebind
 │
 ├── data/                                   # Input datasets (git-ignored)
 │   └── AVSync15/                           # Dataset
@@ -86,7 +91,10 @@ KeyVID/                                     # Project root
 ├── outputs/                                # Inference outputs (git-ignored)
 ├── save_results/                           # Saved evaluation results (git-ignored)
 │
-├── scripts/                                # Inference scripts
+├── scripts/                                # Inference & evaluation scripts
+│   ├── generation.sh                       # Main inference script
+│   ├── avsync15_metric.sh                  # Evaluation script
+│   └── check_paths.sh                      # Setup verification
 ├── configs/                                # Configuration files
 ├── imagebind/                              # ImageBind model code
 ├── lvdm/                                   # Model code
@@ -98,6 +106,11 @@ KeyVID/                                     # Project root
 ├── requirements.txt                        # Python dependencies
 └── README.md
 ```
+
+**External Checkpoints** (for evaluation only):
+- AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+  - Used by `scripts/avsync15_metric.sh` for audio-visual synchronization metrics
+  - Can be customized via `AVSYNC_CKPT` environment variable
 
 ---
 
@@ -224,6 +237,8 @@ for ((i=0; i<N; i++)); do  # Change N to your GPU count
 
 **Status**: Coming soon on HuggingFace.
 
+### Inference Checkpoints
+
 Required files (place under `checkpoint/KeyVID/`):
 - `checkpoint/KeyVID/keyframe_generation/epoch=859-step=10320.ckpt` (~2.5GB)
 - `checkpoint/KeyVID/asva_12_kf_interp/epoch=1479-step=17760.ckpt` (~2.5GB)
@@ -232,6 +247,13 @@ Then set the checkpoint root:
 ```bash
 export CHECKPOINT_ROOT=./checkpoint/KeyVID
 ```
+
+### Evaluation Checkpoint (Optional)
+
+For quantitative evaluation metrics (AlignSync, RelSync), you need:
+- **Location**: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+- **Used by**: `scripts/avsync15_metric.sh`
+- **Configure via**: `export AVSYNC_CKPT=/path/to/avsync/checkpoint-40000`
 
 ---
 
@@ -259,6 +281,39 @@ brew install gettext
 # Inside container
 rocm-smi
 python -c "import torch; print(torch.cuda.is_available())"
+```
+
+---
+
+## 📊 Evaluation
+
+Evaluate generated videos with quantitative metrics:
+
+```bash
+# Set dataset path (optional if using default ./data/AVSync15)
+export AVSYNC15_ROOT=./data/AVSync15
+
+# Run evaluation
+bash scripts/avsync15_metric.sh
+```
+
+**Metrics computed**:
+- FID (Fréchet Inception Distance)
+- FVD (Fréchet Video Distance)
+- CLIP-Sim (Image-Audio and Image-Text similarity)
+- RelSync (Relative audio-visual synchronization)
+- AlignSync (Alignment synchronization)
+
+**Requirements**:
+- AVSync checkpoint: `/dockerx/groups/KeyVID_hf_model/avsync/vggss_sync_contrast_12/ckpts/checkpoint-40000`
+- Ground truth videos: `data/AVSync15/videos/`
+- Generated videos: `outputs/repo/DynamiCrafter/save/asva/.../samples/`
+
+**Custom paths**:
+```bash
+export AVSYNC15_ROOT=/path/to/AVSync15
+export AVSYNC_CKPT=/path/to/avsync/checkpoint-40000
+bash scripts/avsync15_metric.sh
 ```
 
 ---
