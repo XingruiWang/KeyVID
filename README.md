@@ -7,6 +7,12 @@
   <a href="https://arxiv.org/pdf/2504.09656">
     <img src="https://img.shields.io/badge/arXiv-2504.09656-b31b1b.svg" alt="arXiv">
   </a>
+  <a href="https://huggingface.co/RyanWW/KeyVID">
+    <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue" alt="Model">
+  </a>
+  <a href="https://huggingface.co/datasets/RyanWW/KeyVID_data">
+    <img src="https://img.shields.io/badge/Hugging%20Face-Data-orange" alt="Data">
+  </a>
   <img src="https://img.shields.io/github/license/XingruiWang/KeyVID" alt="License">
 </p>
 
