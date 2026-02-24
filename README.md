@@ -26,16 +26,6 @@ Official repository for **KeyVID** - a unified diffusion framework that generate
 
 ---
 
-## 📦 Release Plan
-
-- [ ] Keyframe Localization Code — Coming soon  
-- [x] Keyframe Generation Code — Released ✅
-- [x] Interpolation Code — Released ✅
-- [ ] Training Code — Coming soon
-- [ ] Pre-trained Checkpoints — Coming soon (HuggingFace)
-
----
-
 ## 🚀 Quick Start
 
 ```bash
